@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Biblioteca Anarodan</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sistema de Biblioteca Anarodan</h1>
+            <p>Gerenciamento de usuários, livros e empréstimos</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('home')"><i class="fas fa-home"></i> Início</button>
+            <button class="nav-tab" onclick="showSection('usuarios')"><i class="fas fa-user-friends"></i>Usuários</button>
+            <button class="nav-tab" onclick="showSection('livros')"><i class="fas fa-book-open"></i>Livros</button>
+            <button class="nav-tab" onclick="showSection('emprestimos')"><i class="fas fa-handshake"></i>Empréstimos</button>
+        </div>
+
+        <div id="snackbar" class="snackbar"></div>
+
+        <div class="content">
+            <div id="home" class="section active">
+                <h2>Bem-vindo a Biblioteca Anarodan</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <i class="fas fa-users icon"></i>
+                        <h3 id="totalUsuarios">0</h3>
+                        <p>Usuários Cadastrados</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-book icon"></i>
+                        <h3 id="totalLivros">0</h3>
+                        <p>Livros no Acervo</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-handshake icon"></i>
+                        <h3 id="totalEmprestimos">0</h3>
+                        <p>Empréstimos Ativos</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="usuarios" class="section">
+                <h2>Gerenciamento de Usuários</h2>
+                
+                <div class="form-group">
+                    <h3>Cadastrar Novo Usuário</h3>
+                    <form id="formUsuario" onsubmit="salvarUsuario(event)">
+                        <input type="hidden" id="usuarioId">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ID do Usuário (Matrícula/Código) *</label>
+                                <input type="text" id="usuarioCodigo" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nome Completo *</label>
+                                <input type="text" id="usuarioNome" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>E-mail *</label>
+                                <input type="email" id="usuarioEmail" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar Usuário</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelarEdicaoUsuario()">Cancelar</button>
+                    </form>
+                </div>
+
+                <h3>Lista de Usuários</h3>
+                <div id="listaUsuarios"></div>
+            </div>
+
+            <div id="livros" class="section">
+                <h2>Gerenciamento de Livros</h2>
+                
+                <div class="form-group">
+                    <h3>Cadastrar Novo Livro</h3>
+                    <form id="formLivro" onsubmit="salvarLivro(event)">
+                        <input type="hidden" id="livroId">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ID do Livro (ISBN/Código) *</label>
+                                <input type="text" id="livroCodigo" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Título *</label>
+                                <input type="text" id="livroTitulo" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Autor *</label>
+                                <input type="text" id="livroAutor" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Ano *</label>
+                                <input type="number" id="livroAno" min="1000" max="2099" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Gênero *</label>
+                                <input type="text" id="livroGenero" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>URL da Capa (Opcional)</label>
+                            <input type="url" id="livroCapa">
+                        </div>
+                        <div class="form-group">
+                            <label>Sinopse (Opcional)</label>
+                            <textarea id="livroSinopse" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar Livro</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelarEdicaoLivro()">Cancelar</button>
+                    </form>
+                </div>
+
+                <h3>Lista de Livros</h3>
+                <div id="listaLivros"></div>
+            </div>
+
+            <div id="emprestimos" class="section">
+                <h2>Gerenciamento de Empréstimos</h2>
+                
+                <div class="form-group">
+                    <h3>Registrar Novo Empréstimo</h3>
+                    <form id="formEmprestimo" onsubmit="salvarEmprestimo(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Usuário *</label>
+                                <select id="emprestimoUsuario" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Livro Disponível *</label>
+                                <select id="emprestimoLivro" required></select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrar Empréstimo</button>
+                    </form>
+                </div>
+
+                <h3>Lista de Empréstimos</h3>
+                <div id="listaEmprestimos"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sinopseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fecharModal()">&times;</span>
+            <div id="sinopseConteudo">
+                </div>
+        </div>
+    </div>
+
+    <script src="BibliotecaAnarodan.js"></script>
+</body>
+</html>
